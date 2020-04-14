@@ -33,11 +33,12 @@ setup(
     keywords=[""],
     packages=["anitareader"],
     python_requires=">=3.6*, <4",
-    install_requires=[],
+    install_requires=["pandas", "numpy", "uproot"],
     extras_require={
         "test": ["pytest", "black", "mypy",
                  "coverage", "pytest-cov", "flake8"],
     },
     scripts=[],
     project_urls={},
+    include_package_data=True
 )
