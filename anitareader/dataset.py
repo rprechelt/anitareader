@@ -81,15 +81,32 @@ class Dataset:
         """
         Iterate over chunks of events contained in this dataset.
         """
-        return self.iterate()
+        # if we are already iterating
+        if self._iterators is not None:
+            return self
+        else:
+            return self.iterate()
 
     def __next__(self) -> pd.DataFrame:
         """
         Return the next chunk of events from the dataset as a DataFrame.
         """
-        return self.__next_dataframe()
+        # try and get the next chunkd
+        try:
+            next_chunk = self.__next_dataframe()
 
-    def iterate(self, **kwargs: Any) -> pd.DataFrame:
+            # return the next chunk
+            return next_chunk
+
+        # if we have finished iterating
+        except StopIteration as stop:
+            # reset our iterators
+            self._iterators = None
+
+            # and re-raise the exception so that the loop stops
+            raise stop
+
+    def iterate(self, entrysteps: int = 1000, **kwargs: Any) -> pd.DataFrame:
         """
         """
         # initialize iterators to an empty list
@@ -114,13 +131,15 @@ class Dataset:
             # and the branches that we load
             branches = self._branches[file_type]
 
+            print(f"entrysteps: {entrysteps}")
+
             # create the iterator for this filetype
             iterator = uproot.iterate(
                 file_names,
                 tree_name,
                 branches=branches,
                 namedecode="utf-8",
-                entrysteps=1000,
+                entrysteps=entrysteps,
                 basketcache=self._cache,
                 **kwargs,
             )
@@ -208,12 +227,17 @@ class Dataset:
         Change the runs contained in this dataset.
         """
 
-        # if we only got an integer, make it a list
-        if isinstance(runs, int):
-            runs = [runs]
+        # provide some basic type-conversions here
+        if isinstance(runs, list):
+            self._runs = runs
+        elif isinstance(runs, np.ndarray):
+            self._runs = runs
+        else:
+            # otherwise make it a list
+            self._runs = [runs]
 
-        # change the list of saved runs
-        self._runs = runs
+        # and reset the iterators as we have to start again
+        self._iterators = None
 
     def __repr__(self) -> str:
         """

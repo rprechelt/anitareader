@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 from anitareader import Dataset
 from anitareader.waveforms import Waveforms
@@ -112,3 +113,71 @@ def test_read_default() -> None:
         # if we have read three chunks, we assume that things are working
         if nchunks == 2:
             break
+
+
+def test_read_chunks() -> None:
+    """
+    Check that I can I change the size of each chunk
+    while reading.
+    """
+
+    # loop over the dataset 100 events at a time
+    for events in Dataset(4).iterate(entrysteps=100):
+
+        # check that event is a DataFrame
+        assert events.shape[0] == 100
+        break
+
+    # loop over the dataset 1000 events at a time
+    for events in Dataset(4).iterate(entrysteps=1000):
+
+        # check that event is a DataFrame
+        assert events.shape[0] == 1000
+        break
+
+    # create a dataset
+    d = Dataset(4, file_types=["timedGpsEvent"])
+
+    # loop over the dataset a whole file at a time
+    for events in d.iterate(entrysteps=float("inf")):
+
+        # check that event is a DataFrame
+        assert events.shape[0] > 200_000
+        break
+
+
+def test_reset_runs() -> None:
+    """
+    Check that I can I change the size of each chunk
+    while reading.
+    """
+
+    # get the loaded run
+    loaded_run = None
+    loaded_events = None
+
+    # create a dataset
+    d = Dataset(4)
+
+    # loop over the dataset 100 events at a time
+    for events in d.iterate(entrysteps=100):
+
+        # get the current_run
+        loaded_run = events.run[0]
+
+        # and some events
+        loaded_events = events.eventNumber
+        break
+
+    # and now explicitly change the run
+    d.runs = loaded_run
+
+    # loop again
+    for events in d.iterate(entrysteps=100):
+
+        # and check that the run matches
+        assert events.run[0] == loaded_run
+
+        # and that the event numbers are the same
+        assert np.all(np.isclose(events.eventNumber, loaded_events))
+        break
