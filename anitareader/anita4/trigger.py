@@ -1,28 +1,33 @@
-import numpy as np
+"""
+Provides methods to check for A4 trigger types.
+"""
+from typing import Union
+
+import xarray as xr
 
 
-def is_RF(trigtype: np.ndarray) -> np.ndarray:
+def is_RF(trigtype: xr.DataArray) -> xr.DataArray:
     """
     Check for an RF trigger.
 
     Parameters
     ----------
-    trigtype: np.ndarray
+    trigtype: xr.DataArray
         An array of trigger types.
 
     Returns
     -------
-    RF: np.ndarray[bool]
+    RF: xr.DataArray[bool]
         A Boolean array - True if RF trigger.
 
     """
     # check for RF triggers
-    rf: np.ndarray = np.asarray(trigtype & (1 << 0), dtype=bool)
+    rf: xr.DataArray = trigtype & (1 << 0)
 
-    return rf
+    return rf.astype(bool)
 
 
-def is_minbias(trigtype: np.ndarray) -> np.ndarray:
+def is_minbias(trigtype: xr.DataArray) -> xr.DataArray:
     """
     Check for a minimum bias trigger.
 
@@ -30,78 +35,78 @@ def is_minbias(trigtype: np.ndarray) -> np.ndarray:
 
     Parameters
     ----------
-    trigtype: np.ndarray
+    trigtype: xr.DataArray
         An array of trigger types.
 
     Returns
     -------
-    minbias: np.ndarray[bool]
+    minbias: xr.DataArray[bool]
         A Boolean array - True if min bias trigger
     """
     # check for a minbias trigger
-    minbias: np.ndarray = np.logical_or(is_ADU5(trigtype), is_G12(trigtype))
+    minbias: xr.DataArray = is_ADU5(trigtype) | is_G12(trigtype)
 
     return minbias
 
 
-def is_ADU5(trigtype: np.ndarray) -> np.ndarray:
+def is_ADU5(trigtype: xr.DataArray) -> xr.DataArray:
     """
     Check for an ADU5 trigger.
 
     Parameters
     ----------
-    trigtype: np.ndarray
+    trigtype: xr.DataArray
         An array of trigger types.
 
     Returns
     -------
-    ADU5: np.ndarray[bool]
+    ADU5: xr.DataArray[bool]
         A Boolean array - True if ADU5 trigger.
 
     """
     # check for an ADU5 trigger
-    adu5: np.ndarray = np.asarray(trigtype & (1 << 1), dtype=bool)
+    adu5: xr.DataArray = trigtype & (1 << 1)
 
-    return adu5
+    return adu5.astype(bool)
 
 
-def is_G12(trigtype: np.ndarray) -> np.ndarray:
+def is_G12(trigtype: xr.DataArray) -> xr.DataArray:
     """
     Check for an G12 trigger.
 
     Parameters
     ----------
-    trigtype: np.ndarray
+    trigtype: xr.DataArray
         An array of trigger types.
 
     Returns
     -------
-    G12: np.ndarray[bool]
+    G12: xr.DataArray[bool]
         A Boolean array - True if G12 trigger.
 
     """
     # check for a G12 trigger
-    G12: np.ndarray = np.asarray(trigtype & (1 << 2), dtype=bool)
+    G12: xr.DataArray = trigtype & (1 << 2)
 
-    return G12
+    return G12.astype(bool)
 
 
-def is_soft(trigtype: np.ndarray) -> np.ndarray:
+def is_soft(trigtype: xr.DataArray) -> xr.DataArray:
     """
     Check for an soft trigger.
 
     Parameters
     ----------
-    trigtype: np.ndarray
+    trigtype: xr.DataArray
         An array of trigger types.
 
     Returns
     -------
-    soft: np.ndarray[bool]
+    soft: xr.DataArray[bool]
         A Boolean array - True if soft trigger.
 
     """
     # check for a soft trigger
-    soft: np.ndarray = np.asarray(trigtype & (1 << 3), dtype=bool)
+    soft: xr.DataArray = trigtype & (1 << 3)
 
-    return soft
+    return soft.astype(bool)
