@@ -1,10 +1,10 @@
 """
 This module searches for ANITA flight data and for local anitareader data.
 """
-import re
+import glob
 import os
 import os.path as path
-import glob
+import re
 from typing import List
 
 __all__ = ["get_directory", "is_available", "available_runs"]

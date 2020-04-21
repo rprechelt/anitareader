@@ -1,7 +1,9 @@
+"""
+Perform tests on the the anitareader.dataset module.
+"""
 import numpy as np
-import pandas as pd
+
 from anitareader import Dataset
-from anitareader.waveforms import Waveforms
 
 
 def test_read_basic_data() -> None:
@@ -13,10 +15,7 @@ def test_read_basic_data() -> None:
     nchunks = 0
 
     # loop over the dataset
-    for events in Dataset(4, file_types=["timedGpsEvent"]):
-
-        # check that event is a DataFrame
-        assert isinstance(events, pd.DataFrame)
+    for events in Dataset(4, filetypes=["timedGpsEvent"]):
 
         # check that it contains some standard columns
         assert events["run"] is not None
@@ -43,10 +42,7 @@ def test_read_waveforms() -> None:
     nchunks = 0
 
     # loop over the dataset
-    for events in Dataset(4, file_types=["timedGpsEvent", "calEvent"]):
-
-        # check that event is a DataFrame
-        assert isinstance(events, pd.DataFrame)
+    for events in Dataset(4, filetypes=["timedGpsEvent", "calibratedWaveform"]):
 
         # check that it contains some standard columns
         assert events["run"] is not None
@@ -61,14 +57,11 @@ def test_read_waveforms() -> None:
         # and check that each column is the same size
         assert events["run"].size == events["latitude"].size
 
-        # check that we have waveforms stored in the waveform column
-        assert isinstance(events["waveforms"][0], Waveforms)
-
         # make sure that we have unique waveforms for each entry
         assert events["waveforms"][0] is not events["waveforms"][10]
 
         # check that the waveform dimensions match
-        assert events["waveforms"][0].array.shape == (108, 260)
+        assert events["waveforms"][0].shape == (108, 260)
 
         # and make sure I can convert waveforms to a nice string
         assert isinstance(str(events["waveforms"][10]), str)
@@ -92,9 +85,6 @@ def test_read_default() -> None:
 
     # loop over the dataset
     for events in Dataset(4):
-
-        # check that event is a DataFrame
-        assert isinstance(events, pd.DataFrame)
 
         # check that it contains some standard columns
         assert events["run"] is not None
@@ -125,24 +115,24 @@ def test_read_chunks() -> None:
     for events in Dataset(4).iterate(entrysteps=100):
 
         # check that event is a DataFrame
-        assert events.shape[0] == 100
+        assert events.eventNumber.shape[0] == 100
         break
 
     # loop over the dataset 1000 events at a time
     for events in Dataset(4).iterate(entrysteps=1000):
 
         # check that event is a DataFrame
-        assert events.shape[0] == 1000
+        assert events.eventNumber.shape[0] == 1000
         break
 
     # create a dataset
-    d = Dataset(4, file_types=["timedGpsEvent"])
+    d = Dataset(4, filetypes=["timedGpsEvent"])
 
     # loop over the dataset a whole file at a time
     for events in d.iterate(entrysteps=float("inf")):
 
         # check that event is a DataFrame
-        assert events.shape[0] > 200_000
+        assert events.eventNumber.shape[0] > 200_000
         break
 
 
@@ -157,17 +147,23 @@ def test_reset_runs() -> None:
     loaded_events = None
 
     # create a dataset
-    d = Dataset(4)
+    d = Dataset(4, filetypes=["timedGpsEvent"])
+
+    print("BLURGH")
 
     # loop over the dataset 100 events at a time
     for events in d.iterate(entrysteps=100):
 
+        print("BLAH!")
         # get the current_run
-        loaded_run = events.run[0]
+        loaded_run = events.run.data[0]
+        print(events)
 
         # and some events
-        loaded_events = events.eventNumber
+        loaded_events = events.eventNumber.data
         break
+
+    print(loaded_run)
 
     # and now explicitly change the run
     d.runs = loaded_run
@@ -176,8 +172,8 @@ def test_reset_runs() -> None:
     for events in d.iterate(entrysteps=100):
 
         # and check that the run matches
-        assert events.run[0] == loaded_run
+        assert events.run.data[0] == loaded_run
 
         # and that the event numbers are the same
-        assert np.all(np.isclose(events.eventNumber, loaded_events))
+        assert np.all(np.isclose(events.eventNumber.data, loaded_events))
         break

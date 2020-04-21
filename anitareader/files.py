@@ -9,6 +9,7 @@ names = {
     4: {
         "avgSurfHk": "avgSurfHkFile",
         "calEvent": "calEventFile",
+        "calibratedWaveform": "calibratedWaveformFile",
         "calibratedEventInfo": "calibratedEventInfo",
         "event": "eventFile",
         "gpsEvent": "gpsEvent",

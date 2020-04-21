@@ -8,6 +8,7 @@ __all__ = ["names"]
 names = {
     "avgSurfHk": "avgSurfHk",
     "calEvent": "event",
+    "calibratedWaveform": "event",
     "calibratedEventInfo": "calInfo",
     "event": "event",
     "gpsEvent": "adu5Pat",

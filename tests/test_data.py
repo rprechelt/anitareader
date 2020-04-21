@@ -2,6 +2,7 @@
 Provide tests of the anitareader.data module.
 """
 import pytest
+
 import anitareader.data as data
 
 
