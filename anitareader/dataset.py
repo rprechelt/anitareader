@@ -243,7 +243,48 @@ class AnitaDataset(ABC, Iterable[xr.Dataset]):
             # otherwise make it a list
             self._runs = [runs]
 
-    def _get_filenames(self, filetype: str, runs: Optional[List[int]]) -> List[str]:
+    @property
+    def numentries(self) -> Dict[int, int]:
+        """
+        Calculate the number of events in each run.
+
+        This uses the first-defined filetype, opens the ROOT
+        headers, and then calculates the number of entries in the tree.
+        The return dictionary takes the run number as keys and has
+        the number of entries as values.
+
+        Returns
+        -------
+        event_count: Dict[int, int]
+            The number of entries in each run that we loaded.
+
+        """
+
+        # default, use the head file
+        if 'head' in self._filetypes:
+            ftype = 'head'
+        else:  # otherwise just use the first one
+            ftype = self._filetypes[0]
+
+        # the dictionary where we store the results
+        N = {}
+
+        # loop over the filenames associated with this filetype
+        for run, fname in zip(self._runs, self._get_filenames(ftype)):
+
+            # open the file with uproot
+            with uproot.open(fname) as f:
+
+                # load the first tree from the file
+                tree = f[f.keys()[0]]
+
+                # and save the number of entries
+                N[run] = tree.numentries
+
+        # and return the result
+        return N
+
+    def _get_filenames(self, filetype: str, runs: Optional[List[int]] = None) -> List[str]:
         """
         Return the list of run filenames for a given `filetype`.
         """
