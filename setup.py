@@ -1,5 +1,6 @@
 from os import path
-from setuptools import setup, find_packages
+
+from setuptools import find_packages, setup
 
 # the anitareader version
 __version__ = "0.0.1"
@@ -35,7 +36,7 @@ setup(
     python_requires=">=3.6*, <4",
     install_requires=["pandas", "numpy", "uproot"],
     extras_require={
-        "test": ["pytest", "black", "mypy",
+        "test": ["pytest", "black", "mypy", "isort",
                  "coverage", "pytest-cov", "flake8"],
     },
     scripts=[],
