@@ -61,7 +61,7 @@ def test_read_waveforms() -> None:
         assert events["waveforms"][0] is not events["waveforms"][10]
 
         # check that the waveform dimensions match
-        assert events["waveforms"][0].shape == (108, 260)
+        assert events["waveforms"][0].shape == (16, 3, 2, 260)
 
         # and make sure I can convert waveforms to a nice string
         assert isinstance(str(events["waveforms"][10]), str)

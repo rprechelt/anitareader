@@ -106,7 +106,7 @@ class AnitaDataset(ABC, Iterable[xr.Dataset]):
         """
         # try and get the next chunk
         try:
-            next_chunk = self._next_dataframe()
+            next_chunk = self.__next_dataframe()
 
             # return the next chunk
             return next_chunk
@@ -140,7 +140,7 @@ class AnitaDataset(ABC, Iterable[xr.Dataset]):
             file_names = self._get_filenames(file_type, runs)
 
             # the tree name associated with this file
-            tree_name = trees.names[file_type] + "Tree"
+            tree_name = trees.names[file_type]
 
             # and the branches that we load
             branches = self._branches[file_type]
@@ -167,7 +167,7 @@ class AnitaDataset(ABC, Iterable[xr.Dataset]):
         # and return the joined data frames
         return self
 
-    def _create_dataframe(
+    def __create_dataframe(
         self, filetype: str, branch_data: Mapping[Hashable, Any]
     ) -> xr.Dataset:
         """
@@ -190,7 +190,7 @@ class AnitaDataset(ABC, Iterable[xr.Dataset]):
         """
         """
 
-    def _next_dataframe(self) -> xr.Dataset:
+    def __next_dataframe(self) -> xr.Dataset:
         """
         """
 
@@ -204,7 +204,7 @@ class AnitaDataset(ABC, Iterable[xr.Dataset]):
             )
 
         # extract the first file as the primary data frame
-        df = self._create_dataframe(self._filetypes[0], next(self._iterators[0]))
+        df = self.__create_dataframe(self._filetypes[0], next(self._iterators[0]))
 
         # if we only have one requested filetype, then we are done
         if len(self._filetypes) == 1:
@@ -216,7 +216,7 @@ class AnitaDataset(ABC, Iterable[xr.Dataset]):
         # for each filetype, we add its columns to the pre-existing xr.Dataset
         # using eventNumber as the merging index
         for filetype, iterator in zip(self._filetypes[1:], self._iterators[1:]):
-            df.update(self._create_dataframe(filetype, next(iterator)))
+            df.update(self.__create_dataframe(filetype, next(iterator)))
 
         # and we are done
         return df
