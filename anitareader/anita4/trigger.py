@@ -31,7 +31,7 @@ def is_minbias(trigtype: xr.DataArray) -> xr.DataArray:
     """
     Check for a minimum bias trigger.
 
-    For ANITA4, this is a either a ADU5 or a G12 trigger.
+    For ANITA4, this is a either a ADU5, G12, or soft trigger.
 
     Parameters
     ----------
@@ -44,7 +44,7 @@ def is_minbias(trigtype: xr.DataArray) -> xr.DataArray:
         A Boolean array - True if min bias trigger
     """
     # check for a minbias trigger
-    minbias: xr.DataArray = is_ADU5(trigtype) | is_G12(trigtype)
+    minbias: xr.DataArray = is_ADU5(trigtype) | is_G12(trigtype) | is_soft(trigtype)
 
     return minbias
 
