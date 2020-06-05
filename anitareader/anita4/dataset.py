@@ -8,6 +8,7 @@ import numpy as np
 import xarray as xr
 from cachetools import cached
 
+from anitareader.waveforms import WaveformReader
 from anitareader.dataset import AnitaDataset
 
 
@@ -23,6 +24,9 @@ class Anita4Dataset(AnitaDataset):
         See documentation for Dataset.
         """
         super().__init__(*args, **kwargs)
+
+        # create a new WaveformReader
+        self.waveforms = WaveformReader(self._runs[0], self.flight)
 
     @cached(cache={})
     @staticmethod
@@ -69,7 +73,8 @@ class Anita4Dataset(AnitaDataset):
         for key, val in branch_data.items():
 
             # check if this is an ANITA4 calibrated waveform
-            if re.search(r"^[a-zA-z]*\[16\]\[3\]\[2\]\[260\]$", key):
+            # if re.search(r"^[a-zA-z]*\[16\]\[3\]\[2\]\[260\]$", key):
+            if re.search(r"^[a-zA-z]*\[108\]\[260\]$", key):
                 self._convert_calibrated_waveforms(key, branch_data, arrays)
             # check if this is a channel scalar quantity
             elif re.search(r"^[a-zA-z]*\[16\]\[3\]\[2\]\[260\]$", key):
@@ -86,30 +91,11 @@ class Anita4Dataset(AnitaDataset):
         """
         """
 
-        # extract the event number from the dictionary
-        eventNumber = branch_data["eventNumber"]
-
-        # and get the phi sectors, rings, and pols
-        phis, rings, pols = self._phi_ring_pol()
-
-        # and create the standard time offset assuming 2.6 GSa/s
-        times = np.arange(260) / 2.6  # in ns
-
-        # create the DataArray
-        xarr = xr.DataArray(
-            branch_data[key],
-            coords={
-                "eventNumber": eventNumber,
-                "phi": phis,
-                "ring": rings,
-                "pol": pols,
-                "time": times,
-            },
-            dims=["eventNumber", "phi", "ring", "pol", "time"],
-        )
+        # # extract the event number from the dictionary
+        eventNumbers = branch_data["eventNumber"]
 
         # and add this to the arrays dictionary in-place
-        arrays["waveforms"] = xarr
+        arrays["waveforms"] = self.waveforms.next(eventNumbers.shape[-1])
 
     def _convert_calibrated_scalar(
         self, key: str, branch_data: Mapping, arrays: Dict[str, xr.DataArray]
@@ -149,6 +135,12 @@ class Anita4Dataset(AnitaDataset):
 
         # extract the event number from the dictionary
         eventNumber = branch_data["eventNumber"]
+
+        print(key)
+        print(branch_data[key])
+        print(branch_data[key].shape)
+        print(eventNumber)
+        print(eventNumber.shape)
 
         # create the DataArray
         xarr = xr.DataArray(

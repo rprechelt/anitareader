@@ -1,7 +1,6 @@
 """
 Provides methods to check for A4 trigger types.
 """
-from typing import Union
 
 import xarray as xr
 

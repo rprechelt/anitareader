@@ -78,6 +78,10 @@ class AnitaDataset(ABC, Iterable[xr.Dataset]):
         # set the requested runs or get defaults
         self._runs = runs if runs else data.available_runs(flight)
 
+        # if we didn't find any runs, then error
+        if len(self._runs) == 0:
+            raise ValueError(f"No available runs were provided or found.")
+
         # save the requested filesn
         self._filetypes = filetypes if filetypes else defaults.file_types[flight]
 
@@ -120,7 +124,7 @@ class AnitaDataset(ABC, Iterable[xr.Dataset]):
             raise stop
 
     def iterate(
-        self, entrysteps: int = 2000, runs: Optional[List[int]] = None, **kwargs: Any
+        self, entrysteps: int = 1000, runs: Optional[List[int]] = None, **kwargs: Any
     ) -> Iterator[xr.Dataset]:
         """
         """
@@ -261,8 +265,8 @@ class AnitaDataset(ABC, Iterable[xr.Dataset]):
         """
 
         # default, use the head file
-        if 'head' in self._filetypes:
-            ftype = 'head'
+        if "head" in self._filetypes:
+            ftype = "head"
         else:  # otherwise just use the first one
             ftype = self._filetypes[0]
 
@@ -284,7 +288,9 @@ class AnitaDataset(ABC, Iterable[xr.Dataset]):
         # and return the result
         return N
 
-    def _get_filenames(self, filetype: str, runs: Optional[List[int]] = None) -> List[str]:
+    def _get_filenames(
+        self, filetype: str, runs: Optional[List[int]] = None
+    ) -> List[str]:
         """
         Return the list of run filenames for a given `filetype`.
         """
