@@ -12,6 +12,7 @@ file_types = {4: ["head", "timedGpsEvent", "calEvent"]}
 branches = {
     4: {
         "calEvent": ["run", "eventNumber", "data[108][260]"],
+        "event": ["run", "eventNumber", "data[108][260]"],
         "head": ["run", "eventNumber", "realTime", "trigType"],
         "timedGpsEvent": [
             "run",
