@@ -1,6 +1,7 @@
 from os import path
 
 from setuptools import find_packages, setup
+from cmake import CMakeExtension, CMakeBuild
 
 # the anitareader version
 __version__ = "0.0.1"
@@ -34,12 +35,23 @@ setup(
     keywords=[""],
     packages=["anitareader"],
     python_requires=">=3.6*, <4",
-    install_requires=["pandas", "numpy", "uproot"],
+    install_requires=["xarray", "numpy", "uproot", "cachetools"],
     extras_require={
-        "test": ["pytest", "black", "mypy", "isort",
-                 "coverage", "pytest-cov", "flake8"],
+        "test": [
+            "pytest",
+            "black",
+            "mypy",
+            "isort",
+            "coverage",
+            "pytest-cov",
+            "flake8",
+        ],
     },
     scripts=[],
     project_urls={},
-    include_package_data=True
+    include_package_data=True,
+    # call into CMake to build our module
+    ext_modules=[CMakeExtension("_anitareader")],
+    cmdclass={"build_ext": CMakeBuild},
+    zip_safe=False,
 )
