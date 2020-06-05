@@ -56,8 +56,9 @@ class WaveformReader:
         # allocate memory to store the waveforms
         # this *MUST* be in float32 or you will pull your hair out.
         # and Satan himself will conspire to make you crazy.
-        waveforms = np.zeros((N, len(phis), len(rings), len(pols), wvfm_size),
-                             dtype=np.float32)
+        waveforms = np.zeros(
+            (N, len(phis), len(rings), len(pols), wvfm_size), dtype=np.float32
+        )
 
         # read the next events from the waveform reader
         # this fills in `waveforms` with calibrate data

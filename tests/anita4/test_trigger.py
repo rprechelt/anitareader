@@ -2,6 +2,7 @@
 Test trigger types for ANITA4.
 """
 import numpy as np
+
 import anitareader
 import anitareader.anita4.trigger as trigger
 

@@ -2,6 +2,7 @@
 Test anitareader/flightpath.py
 """
 import pytest
+
 import anitareader.flightpath as flightpath
 
 

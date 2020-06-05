@@ -3,6 +3,7 @@ Test that I can directly load waveforms using
 a WaveformReader instance.
 """
 import numpy as np
+
 from anitareader.data import available_runs
 from anitareader.waveforms import WaveformReader
 

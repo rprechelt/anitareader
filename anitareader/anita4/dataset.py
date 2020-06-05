@@ -8,8 +8,8 @@ import numpy as np
 import xarray as xr
 from cachetools import cached
 
-from anitareader.waveforms import WaveformReader
 from anitareader.dataset import AnitaDataset
+from anitareader.waveforms import WaveformReader
 
 
 class Anita4Dataset(AnitaDataset):
