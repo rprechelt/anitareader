@@ -22,6 +22,6 @@ mypy:
 	python -m mypy anitareader
 
 isort:
-	python -m isort --atomic -rc -y anitareader
+	python -m isort --atomic -rc -y anitareader tests
 
 # end
