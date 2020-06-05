@@ -1,7 +1,7 @@
 import anitareader
 
 
-def test_anitareader_version():
+def test_anitareader_version() -> None:
     """
     Check the anitareader version.
     """
